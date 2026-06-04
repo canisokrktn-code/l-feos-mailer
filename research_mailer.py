@@ -34,46 +34,72 @@ def hafta_indeksi():
     """Yılın kaçıncı haftası — rotasyon için"""
     return date.today().isocalendar()[1]
 
+def temizle(metin):
+    """Unicode karakterleri ASCII'ye cevir"""
+    return (metin
+        .replace('—', '-').replace('–', '-')
+        .replace('•', '*').replace('’', "'")
+        .replace('‘', "'").replace('“', '"')
+        .replace('”', '"').replace('…', '...')
+        .replace('─', '-').replace('━', '=')
+        .replace('┃', '|').replace('●', '*')
+        .replace('✔', '+').replace('✘', 'x')
+        .replace('ı', 'i').replace('ş', 's')
+        .replace('ğ', 'g').replace('ü', 'u')
+        .replace('ö', 'o').replace('ç', 'c')
+        .replace('İ', 'I').replace('Ş', 'S')
+        .replace('Ğ', 'G').replace('Ü', 'U')
+        .replace('Ö', 'O').replace('Ç', 'C')
+        .replace('̇', '').encode('latin-1', 'ignore').decode('latin-1')
+    )
+
 def pdf_olustur(kategori_adi, ikon, alt_baslik, arastirma):
     pdf = FPDF()
     pdf.add_page()
     pdf.set_auto_page_break(auto=True, margin=20)
     pdf.set_margins(20, 20, 20)
 
-    # Başlık bloğu
+    baslik_txt = temizle(f"LIFE OS - {kategori_adi.upper()} ARASTIRMASI")
+    alt_txt    = temizle(alt_baslik)
+    ar_baslik  = temizle(arastirma["baslik"])
+    ar_alt     = temizle(arastirma["alt"])
+    ar_ozet    = temizle(arastirma["ozet"])
+    ar_pratik  = temizle(arastirma["pratik"])
+
+    # Başlık
     pdf.set_fill_color(20, 20, 20)
     pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Helvetica", "B", 22)
-    pdf.cell(0, 14, f"LIFE OS — {kategori_adi.upper()} ARASTIRMASI", ln=True, fill=True, align="C")
+    pdf.set_font("Helvetica", "B", 20)
+    pdf.cell(0, 14, baslik_txt, new_x="LMARGIN", new_y="NEXT", fill=True, align="C")
 
     pdf.set_font("Helvetica", "", 11)
     pdf.set_text_color(180, 180, 180)
-    pdf.cell(0, 8, alt_baslik, ln=True, align="C")
+    pdf.cell(0, 8, alt_txt, new_x="LMARGIN", new_y="NEXT", align="C")
     pdf.ln(4)
 
     # Araştırma başlığı
     pdf.set_fill_color(230, 57, 70)
     pdf.set_text_color(255, 255, 255)
-    pdf.set_font("Helvetica", "B", 16)
-    pdf.multi_cell(0, 10, arastirma["baslik"], fill=True, align="L")
+    pdf.set_font("Helvetica", "B", 15)
+    pdf.multi_cell(0, 10, ar_baslik, fill=True, align="L")
     pdf.ln(2)
 
     pdf.set_text_color(100, 100, 100)
     pdf.set_font("Helvetica", "I", 11)
-    pdf.multi_cell(0, 7, arastirma["alt"])
+    pdf.multi_cell(0, 7, ar_alt)
     pdf.ln(6)
 
     # Özet
     pdf.set_text_color(30, 30, 30)
     pdf.set_font("Helvetica", "B", 13)
-    pdf.cell(0, 9, "OZET", ln=True)
+    pdf.cell(0, 9, "OZET", new_x="LMARGIN", new_y="NEXT")
     pdf.set_draw_color(230, 57, 70)
     pdf.set_line_width(0.8)
     pdf.line(20, pdf.get_y(), 100, pdf.get_y())
     pdf.ln(4)
     pdf.set_font("Helvetica", "", 10)
     pdf.set_text_color(50, 50, 50)
-    for para in arastirma["ozet"].strip().split("\n\n"):
+    for para in ar_ozet.strip().split("\n\n"):
         pdf.multi_cell(0, 6, para.strip())
         pdf.ln(3)
 
@@ -81,37 +107,37 @@ def pdf_olustur(kategori_adi, ikon, alt_baslik, arastirma):
     pdf.ln(2)
     pdf.set_font("Helvetica", "B", 13)
     pdf.set_text_color(30, 30, 30)
-    pdf.cell(0, 9, "ANAHTAR NOKTALAR", ln=True)
+    pdf.cell(0, 9, "ANAHTAR NOKTALAR", new_x="LMARGIN", new_y="NEXT")
     pdf.line(20, pdf.get_y(), 100, pdf.get_y())
     pdf.ln(4)
     pdf.set_font("Helvetica", "", 10)
     for nokta in arastirma["anahtar"]:
         pdf.set_text_color(230, 57, 70)
-        pdf.cell(8, 7, chr(149))
+        pdf.cell(8, 7, "*")
         pdf.set_text_color(50, 50, 50)
-        pdf.multi_cell(0, 7, nokta.strip())
+        pdf.multi_cell(0, 7, temizle(nokta.strip()))
 
-    # Pratik uygulama
+    # Pratik
     pdf.ln(4)
     pdf.set_fill_color(245, 245, 245)
     pdf.set_font("Helvetica", "B", 12)
     pdf.set_text_color(30, 30, 30)
-    pdf.cell(0, 9, "BU HAFTA UYGULA", ln=True, fill=True)
+    pdf.cell(0, 9, "BU HAFTA UYGULA", new_x="LMARGIN", new_y="NEXT", fill=True)
     pdf.set_font("Helvetica", "I", 10)
     pdf.set_text_color(60, 60, 60)
-    pdf.multi_cell(0, 7, arastirma["pratik"].strip(), fill=True)
+    pdf.multi_cell(0, 7, ar_pratik.strip(), fill=True)
 
     # Kaynaklar
     pdf.ln(4)
     pdf.set_font("Helvetica", "B", 13)
     pdf.set_text_color(30, 30, 30)
-    pdf.cell(0, 9, "KAYNAKLAR", ln=True)
+    pdf.cell(0, 9, "KAYNAKLAR", new_x="LMARGIN", new_y="NEXT")
     pdf.line(20, pdf.get_y(), 100, pdf.get_y())
     pdf.ln(3)
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(80, 80, 80)
     for kaynak in arastirma["kaynaklar"]:
-        pdf.multi_cell(0, 6, f"  {chr(8226)}  {kaynak}")
+        pdf.multi_cell(0, 6, temizle(f"  *  {kaynak}"))
 
     # Footer
     pdf.set_y(-20)
