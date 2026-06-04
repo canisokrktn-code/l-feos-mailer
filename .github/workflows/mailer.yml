@@ -57,7 +57,7 @@ jobs:
         run: |
           MODE="${{ steps.mode.outputs.mode }}"
           if [ "$MODE" = "arastirma" ]; then
-            python research_mailer.py
+            python research_mailer.py test
           else
             python lifeos_mailer.py $MODE
           fi

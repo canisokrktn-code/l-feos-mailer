@@ -171,9 +171,24 @@ BU HAFTA UYGULA
     print(f"✅ {kategori_adi} araştırması gönderildi: {arastirma['baslik']}")
 
 if __name__ == '__main__':
-    bugun = date.today().weekday()  # 0=Pzt, 2=Çar, 4=Cum
-    if bugun in KATEGORILER:
-        kat, banka, ikon, alt = KATEGORILER[bugun]
+    # Argüman verilmişse o kategoriyi gönder (test için)
+    # python research_mailer.py mesleki / mindtech / saglik / test
+    arg = sys.argv[1].lower() if len(sys.argv) > 1 else ''
+
+    if arg == 'mesleki':
+        send_research(*KATEGORILER[0][::1])
+    elif arg in ('mindtech', 'mt'):
+        send_research(*KATEGORILER[2][::1])
+    elif arg in ('saglik', 'sağlık'):
+        send_research(*KATEGORILER[4][::1])
+    elif arg == 'test':
+        # Test modunda Mesleki gönder
+        kat, banka, ikon, alt = KATEGORILER[0]
         send_research(kat, ikon, alt, banka)
     else:
-        print(f"Bugün ({bugun}) araştırma günü değil.")
+        bugun = date.today().weekday()
+        if bugun in KATEGORILER:
+            kat, banka, ikon, alt = KATEGORILER[bugun]
+            send_research(kat, ikon, alt, banka)
+        else:
+            print(f"Bugün ({bugun}) araştırma günü değil.")
