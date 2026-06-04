@@ -111,11 +111,10 @@ def pdf_olustur(kategori_adi, ikon, alt_baslik, arastirma):
     pdf.line(20, pdf.get_y(), 100, pdf.get_y())
     pdf.ln(4)
     pdf.set_font("Helvetica", "", 10)
+    pdf.set_text_color(50, 50, 50)
     for nokta in arastirma["anahtar"]:
-        pdf.set_text_color(230, 57, 70)
-        pdf.cell(8, 7, "*")
-        pdf.set_text_color(50, 50, 50)
-        pdf.multi_cell(0, 7, temizle(nokta.strip()))
+        pdf.multi_cell(0, 7, ">> " + temizle(nokta.strip()))
+        pdf.ln(1)
 
     # Pratik
     pdf.ln(4)
