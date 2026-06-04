@@ -113,6 +113,7 @@ def pdf_olustur(kategori_adi, ikon, alt_baslik, arastirma):
     pdf.set_font("Helvetica", "", 10)
     pdf.set_text_color(50, 50, 50)
     for nokta in arastirma["anahtar"]:
+        pdf.set_x(pdf.l_margin)
         pdf.multi_cell(0, 7, ">> " + temizle(nokta.strip()))
         pdf.ln(1)
 
@@ -124,10 +125,12 @@ def pdf_olustur(kategori_adi, ikon, alt_baslik, arastirma):
     pdf.cell(0, 9, "BU HAFTA UYGULA", new_x="LMARGIN", new_y="NEXT", fill=True)
     pdf.set_font("Helvetica", "I", 10)
     pdf.set_text_color(60, 60, 60)
+    pdf.set_x(pdf.l_margin)
     pdf.multi_cell(0, 7, ar_pratik.strip(), fill=True)
 
     # Kaynaklar
     pdf.ln(4)
+    pdf.set_x(pdf.l_margin)
     pdf.set_font("Helvetica", "B", 13)
     pdf.set_text_color(30, 30, 30)
     pdf.cell(0, 9, "KAYNAKLAR", new_x="LMARGIN", new_y="NEXT")
@@ -136,7 +139,10 @@ def pdf_olustur(kategori_adi, ikon, alt_baslik, arastirma):
     pdf.set_font("Helvetica", "", 9)
     pdf.set_text_color(80, 80, 80)
     for kaynak in arastirma["kaynaklar"]:
-        pdf.multi_cell(0, 6, temizle(f"  *  {kaynak}"))
+        pdf.set_x(pdf.l_margin)
+        txt = temizle(f"* {kaynak}")
+        pdf.multi_cell(0, 6, txt)
+        pdf.ln(1)
 
     # Footer
     pdf.set_y(-20)
