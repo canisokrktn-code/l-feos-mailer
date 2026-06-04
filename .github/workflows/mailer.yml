@@ -1,0 +1,34 @@
+name: Life OS Mailer
+
+on:
+  schedule:
+    - cron: '0 4 * * *'   # 07:00 Türkiye (UTC+3)
+    - cron: '0 20 * * *'  # 23:00 Türkiye (UTC+3)
+  workflow_dispatch:       # Manuel tetikleme (test için)
+
+jobs:
+  send-mail:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Python kurulum
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Sabah mı Akşam mı?
+        id: mode
+        run: |
+          HOUR=$(date -u +%H)
+          if [ "$HOUR" = "04" ]; then
+            echo "mode=sabah" >> $GITHUB_OUTPUT
+          else
+            echo "mode=aksam" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Mail gönder
+        env:
+          GMAIL_USER: ${{ secrets.GMAIL_USER }}
+          GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
+        run: python lifeos_mailer.py ${{ steps.mode.outputs.mode }}
