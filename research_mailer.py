@@ -154,52 +154,54 @@ def pdf_olustur(kategori_adi, ikon, alt_baslik, arastirma):
 
 def send_research(kategori_adi, ikon, alt_baslik, banka):
     indeks = hafta_indeksi() % len(banka)
-    arastirma = banka[indeks]
+    a = banka[indeks]
 
-    # PDF oluştur
-    pdf_bytes = pdf_olustur(kategori_adi, ikon, alt_baslik, arastirma)
+    anahtar_str = "\n".join(f"  >> {n}" for n in a["anahtar"])
+    kaynak_str  = "\n".join(f"  [{i+1}] {k}" for i, k in enumerate(a["kaynaklar"]))
 
-    # Mail
-    msg = MIMEMultipart()
-    msg['From'] = GMAIL_USER
-    msg['To'] = TO
-    msg['Subject'] = f"{ikon} {kategori_adi}: {arastirma['baslik']}"
+    body = f"""{ikon} LIFE OS - {kategori_adi.upper()} ARASTIRMASI
+{alt_baslik}
+{'='*60}
 
-    body = f"""{ikon} LIFE OS — {kategori_adi.upper()} ARAŞTIRMASI
+{a['baslik'].upper()}
+{a['alt']}
 
-{arastirma['baslik']}
-{arastirma['alt']}
+{'='*60}
+OZET
+{'='*60}
+{a['ozet'].strip()}
 
-━━━━━━━━━━━━━━━━━━━━━
-BU HAFTAKİ KONU
-━━━━━━━━━━━━━━━━━━━━━
-{arastirma['ozet'][:400]}...
+{'='*60}
+ANAHTAR NOKTALAR
+{'='*60}
+{anahtar_str}
 
-Detaylı araştırma ekteki PDF dosyasında.
-
-━━━━━━━━━━━━━━━━━━━━━
+{'='*60}
 BU HAFTA UYGULA
-━━━━━━━━━━━━━━━━━━━━━
-{arastirma['pratik']}
+{'='*60}
+{a['pratik'].strip()}
 
-— Life OS 3.0"""
+{'='*60}
+KAYNAKLAR
+{'='*60}
+{kaynak_str}
 
+{'='*60}
+Life OS 3.0 | {date.today().strftime('%d.%m.%Y')} | Can Korkutan
+"""
+
+    msg = MIMEMultipart()
+    msg['From']    = GMAIL_USER
+    msg['To']      = TO
+    msg['Subject'] = f"{ikon} {kategori_adi} Arastirmasi: {a['baslik']}"
     msg.attach(MIMEText(body, 'plain', 'utf-8'))
-
-    # PDF ekle
-    attachment = MIMEBase('application', 'octet-stream')
-    attachment.set_payload(pdf_bytes)
-    encoders.encode_base64(attachment)
-    dosya_adi = f"LifeOS_{kategori_adi}_{date.today().strftime('%d%m%Y')}.pdf"
-    attachment.add_header('Content-Disposition', f'attachment; filename="{dosya_adi}"')
-    msg.attach(attachment)
 
     with smtplib.SMTP('smtp.gmail.com', 587, timeout=30) as s:
         s.starttls()
         s.login(GMAIL_USER, GMAIL_PASS)
         s.send_message(msg)
 
-    print(f"✅ {kategori_adi} araştırması gönderildi: {arastirma['baslik']}")
+    print(f"✅ {kategori_adi} arastirmasi gonderildi: {a['baslik']}")
 
 if __name__ == '__main__':
     # Argüman verilmişse o kategoriyi gönder (test için)
