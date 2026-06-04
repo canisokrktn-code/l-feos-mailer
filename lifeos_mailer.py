@@ -14,6 +14,7 @@ GMAIL_PASS = os.environ.get('GMAIL_PASS', '')
 TO         = 'canisokrktn@gmail.com'
 
 # ─── HAZİRAN TAKVİMİ ───────────────────────────────────────
+TATIL        = {1,2,3,4,5,6}   # Adana/Tufanbeyli — 1-5 tatil, 6 dönüş
 NOBET        = {7,9,14,16,21,23,25,28}
 MESAI        = {11,18,30}
 NOBET_SONRASI= {8,10,15,17,22,24,26,29}
@@ -80,6 +81,7 @@ MINDTECH = {
 def day_type(d):
     if d.month == 6:
         day = d.day
+        if day in TATIL: return 'tatil'
         if day in NOBET: return 'nobet'
         if day in MESAI: return 'mesai'
         if day in NOBET_SONRASI: return 'nobetSonrasi'
@@ -108,6 +110,25 @@ def format_sabah(d):
         if hafif:
             prog += "\n  ⚡ Hafif gün — ağırlığı %20 düşür, 3 set yap"
         spor_str = f"\n🏋️ SPOR\n{prog}\n"
+
+    if tip == 'tatil':
+        donus = d.day == 6
+        konu = f"{'🔙 Dönüş Günü' if donus else '🏖️ Tatil'} — {gun} {d.day} Haziran"
+        govde = f"""GÜN: {'DÖNÜŞ — Adana→İstanbul' if donus else 'TATİL — Bozgüney Köyü 🏡'}
+
+{'⚠️ Bugün dönüş ve nöbet var — hazırlıklarını yap.' if donus else 'Dinlen, şarj ol. Sistem seni bekliyor.'}
+
+💧 Bol su iç — yolculukta sıvı kaybedersin
+🍽️ Hafif ye, yol yemeği abartma
+{meyve}
+
+📱 Telefona bakma zorunluluğun yok — gerçekten izin al.
+{'🔴 Gece nöbet başlıyor — erken uyu!' if donus else ''}
+
+Haziran {6 if d.day < 6 else 7}\'de sistem devreye giriyor.
+
+— Life OS 3.0"""
+        return konu, govde
 
     if tip == 'nobet':
         konu = f"🔴 Nöbet — {gun} {d.day} Haziran{'  🎂' if dogum else ''}"
@@ -217,6 +238,18 @@ def format_aksam(d):
         if hafif:
             prog += "\n  ⚡ Hafif gün — ağırlığı %20 düşür"
         spor_str = f"\n🏋️ SPOR\n{prog}\n"
+
+    if tip == 'tatil':
+        donus = yarin.day == 6
+        konu = f"{'🔙 Yarın Dönüş' if donus else '🏖️ Yarın Tatil'} — {gun} {yarin.day} Haziran"
+        govde = f"""YARIN: {'DÖNÜŞ GÜNÜ — Adana→İstanbul' if donus else 'TATİL — Bozgüney Köyü 🏡'}
+
+{'⚠️ Yarın dönüş var ve gece nöbet başlıyor! Erken yola çık, erken uyu.' if donus else 'Dinlenmeye devam. Telefonu bırak, insanlarla ol.'}
+
+{'🔴 Nöbet hazırlığı: su matarası, kıyafet, hafif ye.' if donus else ''}
+
+--- Life OS 3.0"""
+        return konu, govde
 
     if tip == 'nobet':
         konu = f"🔴 Yarın Nöbet — {gun} {yarin.day} Haziran"
