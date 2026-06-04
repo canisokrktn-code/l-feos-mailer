@@ -2,9 +2,22 @@ name: Life OS Mailer
 
 on:
   schedule:
-    - cron: '0 4 * * *'   # 07:00 Türkiye (UTC+3)
-    - cron: '0 20 * * *'  # 23:00 Türkiye (UTC+3)
-  workflow_dispatch:       # Manuel tetikleme (test için)
+    - cron: '0 4 * * *'    # 07:00 Türkiye (UTC+3) — sabah planı
+    - cron: '0 20 * * *'   # 23:00 Türkiye (UTC+3) — yarının planı
+    - cron: '0 5 * * 1'    # 08:00 Pazartesi — Mesleki araştırma
+    - cron: '0 5 * * 3'    # 08:00 Çarşamba — MindTech araştırma
+    - cron: '0 5 * * 5'    # 08:00 Cuma — Sağlık araştırma
+  workflow_dispatch:
+    inputs:
+      mod:
+        description: 'Çalışma modu'
+        required: false
+        default: 'sabah'
+        type: choice
+        options:
+          - sabah
+          - aksam
+          - arastirma
 
 jobs:
   send-mail:
@@ -17,18 +30,34 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Sabah mı Akşam mı?
+      - name: Gerekli kütüphaneler
+        run: pip install fpdf2
+
+      - name: Modu belirle
         id: mode
         run: |
-          HOUR=$(date -u +%H)
-          if [ "$HOUR" = "04" ]; then
-            echo "mode=sabah" >> $GITHUB_OUTPUT
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "mode=${{ inputs.mod }}" >> $GITHUB_OUTPUT
           else
-            echo "mode=aksam" >> $GITHUB_OUTPUT
+            HOUR=$(date -u +%H)
+            DOW=$(date -u +%u)  # 1=Pzt, 3=Çar, 5=Cum
+            if [ "$HOUR" = "05" ]; then
+              echo "mode=arastirma" >> $GITHUB_OUTPUT
+            elif [ "$HOUR" = "04" ]; then
+              echo "mode=sabah" >> $GITHUB_OUTPUT
+            else
+              echo "mode=aksam" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: Mail gönder
         env:
           GMAIL_USER: ${{ secrets.GMAIL_USER }}
           GMAIL_PASS: ${{ secrets.GMAIL_PASS }}
-        run: python lifeos_mailer.py ${{ steps.mode.outputs.mode }}
+        run: |
+          MODE="${{ steps.mode.outputs.mode }}"
+          if [ "$MODE" = "arastirma" ]; then
+            python research_mailer.py
+          else
+            python lifeos_mailer.py $MODE
+          fi
