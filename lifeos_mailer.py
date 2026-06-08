@@ -132,91 +132,171 @@ Haziran {6 if d.day < 6 else 7}\'de sistem devreye giriyor.
 
     if tip == 'nobet':
         konu = f"🔴 Nöbet — {gun} {d.day} Haziran{'  🎂' if dogum else ''}"
-        govde = f"""GÜN: NÖBET · 08:00 başlıyor · Dayanıklılık modu
-{'🎂 DOĞUM GÜNÜN KUTLU OLSUN, CAN!' if dogum else ''}
+        govde = f"""{'🎂 DOĞUM GÜNÜN KUTLU OLSUN, CAN!' if dogum else ''}
+━━━━ NÖBET · 08:00→ertesi 08:00 ━━━━━━━━━━━━━━━━
 
-💧 SU — 2 Litre
-Her 2 saatte 1 bardak: 08 · 10 · 12 · 14 · 16 · 18 · 20 · 22
+07:30  🌅  Uyanış + hazırlık
+       📍 Ev — 2 bardak su · Kreatin 5g kahvaltıyla
 
-🍽️ Öğle: {oglen}
-🍽️ Akşam: {aksam}
-{meyve}
-💊 Kreatin: 5g öğünle
-{spor_str}
-🧠 MindTech (nöbet arası)
-{mt if mt else '— Hafif tut, planla, not al.'}
+08:00  🏥  NÖBET BAŞLIYOR
+       📍 Hastane
 
-📚 Gelişim (20 dk)
-{gelisim}
+12:00  🍽️  Öğle: {oglen}
+       📍 Hastane kantini · {meyve}
+       💧 2 bardak su
 
+14:00  🧠  MindTech (nöbet arası, kısa)
+       📍 Nöbet odası
+       {mt if mt else '— Planla, not al, hafif oku.'}
+
+18:00  🍽️  Akşam: {aksam}
+       💧 2 bardak su
+
+20:00  📱  Ara oku / podcast (20 dk)
+       {gelisim}
+
+00:00  💧  Gece suyu — 1 bardak
+02:00  💧  Gece suyu — 1 bardak
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Toplam su hedefi: 3 litre (her 2 saatte 1 bardak)
 — Life OS 3.0"""
 
     elif tip == 'mesai':
         konu = f"🟡 Mesai — {gun} {d.day} Haziran · 09:00–16:00"
-        govde = f"""GÜN: MESAİ 09:00→16:00 · Akşam serbest
+        if p:
+            spor_blok = f"""16:30  🏋️  SPOR — Mesai çıkışı direkt git
+       📍 Spor salonu
+       {PROG[p]}"""
+            mt_blok = f"""19:30  🧠  MindTech — Odaklı çalışma
+       📍 Ev — çalışma masası
+       {mt if mt else '— Akşam seansı, 45 dk–1 saat.'}"""
+        else:
+            spor_blok = f"""16:30  🧠  MindTech — Mesai çıkışı direkt başla
+       📍 Ev — çalışma masası
+       {mt if mt else '— Akşam odaklı seans, 1–2 saat.'}"""
+            mt_blok = ""
 
-💧 SU — 2 Litre
-Sabah evde 2 bardak · Öğlen molası 2 bardak · Akşam 2 bardak
+        govde = f"""━━━━ MESAİ · 09:00–16:00 ━━━━━━━━━━━━━━━━━━━━━
 
-🍽️ Öğle: {oglen}
-🍽️ Akşam: {aksam}
-{meyve}
-💊 Kreatin: 5g öğünle
+08:30  🌅  Uyanış + hazırlık
+       📍 Ev — 2 bardak su · Kreatin 5g kahvaltıyla
 
-⚡ 16:00 Sonrası
-{spor_str if spor_str else '→ Eve gel. MindTech: 45 dk odaklı çalışma.'}
-{mt if mt else ''}
-📚 Gelişim (20 dk): {gelisim}
+09:00  🏥  MESAİ BAŞLIYOR
+       📍 Hastane
 
-3 Öncelik:
-1. {'Spor' if p else 'MindTech'}
-2. {'MindTech' if p else 'Gelişim'}
-3. Pratik / finans
+12:00  🍽️  Öğle: {oglen}
+       📍 Hastane kantini · {meyve}
+       💧 2 bardak su
 
+16:00  🏥  Mesai bitiyor
+
+{spor_blok}
+
+{'18:30' if p else '19:00'}  🍽️  Akşam: {aksam}
+       💧 2 bardak su
+
+{mt_blok}
+
+22:00  📚  Kişisel Gelişim (30 dk)
+       📍 Ev — sessiz ortam / yatak odası
+       {gelisim}
+
+23:30  💤  Uyku
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 — Life OS 3.0"""
 
     elif tip == 'nobetSonrasi':
         konu = f"🟠 Nöbet Sonrası — {gun} {d.day} Haziran"
-        govde = f"""GÜN: NÖBET ÇIKIŞI · Önce ye → uyu (4-6 saat)
+        if p:
+            spor_blok = f"""14:30  🏋️  SPOR — Hafif antrenman
+       📍 Spor salonu
+       {PROG[p]}
+       ⚡ Ağırlığı %20 düşür · 3 set yap"""
+            aksam_saati = "16:30"
+        else:
+            spor_blok = f"""14:00  🚶  Yürüyüş veya dinlenme
+       📍 Dışarı çık, hava al (30 dk)"""
+            aksam_saati = "17:00"
 
-💧 Eve gelince 500 ml iç. Gün boyunca 2 litre hedef.
-🍽️ Hafif: {oglen}
-{meyve}
-💊 Kreatin: 5g öğünle
-{spor_str if spor_str else ''}
-📚 Gelişim (10-15 dk hafif): {gelisim}
+        govde = f"""━━━━ NÖBET ÇIKIŞI · Dinlenme öncelik ━━━━━━━━━━━━
 
-MindTech: Bugün yok — dinlen.
+08:00  🏥  Nöbetten çıkış
+       📍 Hastane → Eve geç
 
+08:30  🍽️  Hafif öğle: {oglen}
+       📍 Ev — {meyve} · Kreatin 5g
+       💧 Eve gelince 500 ml iç
+
+09:00  💤  UYKU — 4–5 saat
+       📍 Yatak odası
+
+{spor_blok}
+
+{aksam_saati}  🍽️  Akşam: {aksam}
+       💧 2 bardak su
+
+21:00  📺  Serbest zaman — hafif içerik
+
+22:00  📚  Kişisel Gelişim (15 dk, hafif)
+       📍 Ev — yatmadan önce
+       {gelisim}
+
+23:00  💤  Uyku
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 — Life OS 3.0"""
 
     else:
         konu = f"{'🎂 Doğum Günün!' if dogum else '🟢 Boş Gün'} — {gun} {d.day} Haziran"
-        govde = f"""GÜN: BOŞ · Sistem çalışıyor.
-{'🎂 DOĞUM GÜNÜN KUTLU OLSUN, CAN! Kendine iyi bak.' if dogum else ''}
+        if p:
+            spor_blok = f"""14:30  🏋️  SPOR — Öğleden sonra git
+       📍 Spor salonu
+       {PROG[p]}"""
+            mt_sure = "10:00–13:30"
+            aksam_saati = "16:30"
+            mt_blok = f"""17:30  🧠  MindTech — İkinci seans (isteğe bağlı)
+       📍 Ev — çalışma masası
+       Devam et veya hafif not al."""
+        else:
+            spor_blok = ""
+            mt_sure = "10:00–14:00"
+            aksam_saati = "14:30"
+            mt_blok = f"""19:30  🧠  MindTech — Akşam seansı (isteğe bağlı)
+       📍 Ev — çalışma masası
+       Devam et veya hafif not al."""
 
-💧 SU — 2 Litre
-Uyanınca 2 · Öğle 2 · İkindi 2 · Akşam 2 bardak
+        govde = f"""{'🎂 DOĞUM GÜNÜN KUTLU OLSUN, CAN!' if dogum else ''}
+━━━━ BOŞ GÜN · Tamamen senindir ━━━━━━━━━━━━━━━
 
-🍽️ Öğle: {oglen}
-🍽️ Akşam: {aksam}
-{meyve}
-💊 Kreatin: 5g öğünle
-{spor_str}
-🧠 MindTech
-{mt if mt else '— Odaklı çalışma günü.'}
-Min 1 saat · Max 4 saat
+08:30  🌅  Uyanış + sabah rutini
+       📍 Ev — 2 bardak su · Kreatin 5g kahvaltıyla
 
-📚 Gelişim (30-40 dk)
-{gelisim}
+{mt_sure}  🧠  MindTech — Ana seans
+       📍 Ev — çalışma masası
+       {mt if mt else '— Odaklı çalışma. Min 1 saat, max 4 saat.'}
 
-3 Öncelik:
-1. MindTech
-2. {'Spor' if p else 'Gelişim'}
-3. Finans / pratik
+{'13:30' if p else '14:30'}  🍽️  Öğle: {oglen}
+       {meyve} · 💧 2 bardak su
 
-💰 KK1→5 Haz, KK2→8 Haz ödendi mi?
+{spor_blok}
 
+{aksam_saati}  ☕  Kısa mola / dinlenme
+
+19:00  🍽️  Akşam: {aksam}
+       💧 2 bardak su
+
+{mt_blok}
+
+22:00  📚  Kişisel Gelişim (30–40 dk)
+       📍 Ev — sessiz ortam / yatak odası
+       {gelisim}
+
+23:30  💤  Uyku
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+💰 KK ödemeleri kontrolü — yapıldı mı?
 — Life OS 3.0"""
 
     return konu, govde
@@ -253,69 +333,102 @@ def format_aksam(d):
 
     if tip == 'nobet':
         konu = f"🔴 Yarın Nöbet — {gun} {yarin.day} Haziran"
-        govde = f"""YARIN: NÖBET 08:00→ertesi 08:00
+        govde = f"""━━━━ YARIN NÖBET · Şimdi hazırlan ━━━━━━━━━━━━━━
 
-GECE HAZIRLIK:
-☐ Erken uyu — en geç 23:30
-☐ Su matarası hazırla
-☐ Kıyafet hazır mı?
-☐ Hafif ye, ağır yeme
+GECE HAZIRLIK (bu gece):
+  ☐ En geç 23:30 uyu
+  ☐ Su matarası hazırla
+  ☐ Kıyafet + çanta hazır mı?
+  ☐ Hafif ye, ağır yeme
 
-NÖBET BOYUNCA — SU:
-08 · 10 · 12 · 14 · 16 · 18 · 20 · 22 · 00 · 02 · 04 · 06
-Her 2 saatte 1 büyük bardak → 3 litre hedef
-
-Nöbet arası: Podcast / makale / MindTech fikir notu
+NÖBET BOYUNCA:
+  08:00  🏥  Başlıyor
+  12:00  🍽️  Öğle — hafif ye
+  14:00  🧠  Ara — not al, oku, MindTech fikir
+  18:00  🍽️  Akşam
+  Su: 08·10·12·14·16·18·20·22·00·02·04·06
+  Her 2 saatte 1 bardak → 3 litre hedef
 
 "Nöbet disiplinin en saf halidir."
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 --- Life OS 3.0"""
 
     elif tip == 'mesai':
         konu = f"🟡 Yarın Mesai — {gun} {yarin.day} Haziran · 09:00–16:00"
-        govde = f"""YARIN: MESAİ 09:00→16:00 · Akşam serbest
+        if p:
+            aksam_plan = f"""  16:30  🏋️  Spor — direkt git
+           {PROG[p]}
+  19:30  🧠  MindTech — {mt if mt else 'akşam seansı'}
+  22:00  📚  Gelişim (30 dk)"""
+        else:
+            aksam_plan = f"""  16:30  🧠  MindTech — {mt if mt else 'akşam seansı'}
+  22:00  📚  Gelişim (30 dk)"""
+        govde = f"""━━━━ YARIN MESAİ · 09:00–16:00 ━━━━━━━━━━━━━━━
 
-SABAH HAZIRLIK:
-☐ 08:30 uyan · ☐ Kıyafet+çanta · ☐ Su iç
+SABAH HAZIRLIK (bu gece):
+  ☐ Kıyafet + çanta hazır mı?
+  ☐ 08:30 alarm kur
 
-Öğlen molasında 2 bardak su unutma.
+YARIN PROGRAM:
+  08:30  Uyanış + hazırlık
+  09:00  🏥  Mesai başlıyor
+  12:00  🍽️  Öğlen — 💧 2 bardak su
+  16:00  Mesai bitiyor
+{aksam_plan}
+  23:30  💤  Uyku
 
-16:00 Sonrası:
-{spor_str if spor_str else '→ Eve gel. MindTech: 45 dk odaklı çalışma.'}
-{mt if mt else ''}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 --- Life OS 3.0"""
 
     elif tip == 'nobetSonrasi':
         konu = f"🟠 Yarın Nöbet Sonrası — {gun} {yarin.day} Haziran"
-        govde = f"""YARIN: NÖBET ÇIKIŞI — DİNLENME
-08:00'de nöbetten çıkıyorsun.
+        if p:
+            spor_notu = f"""  14:30  🏋️  Spor — hafif antrenman
+           {PROG[p]}
+           ⚡ %20 düşür, 3 set"""
+        else:
+            spor_notu = "  14:00  🚶  Yürüyüş / hava al (30 dk)"
+        govde = f"""━━━━ YARIN NÖBET ÇIKIŞI · Dinlen ━━━━━━━━━━━━━━
 
-→ Eve gel → ye → uyu (4-6 saat hedef)
-→ Öğleden sonra: yürüyüş, podcast, hafif okuma
+  08:00  🏥  Nöbetten çıkış
+  08:30  🍽️  Hafif öğle → Eve gel
+  09:00  💤  Uyku — 4–5 saat
+{spor_notu}
+  17:00  🍽️  Akşam
+  22:00  📚  Hafif gelişim (15 dk)
+  23:00  💤  Uyku
 
-✗ Ağır spor yok  ✗ Büyük karar yok  ✗ Aşırı ekran yok
-{spor_str if spor_str else ''}
-Su: Eve gelince 500 ml iç.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 --- Life OS 3.0"""
 
     else:
         konu = f"{'🎂 Yarın Doğum Günün!' if dogum else '🟢 Yarın Boş Gün'} — {gun} {yarin.day} Haziran"
-        govde = f"""YARIN: BOŞ GÜN — Senindir.
-{'🎂 YARIN DOĞUM GÜNÜN! Kendine iyi bak.' if dogum else ''}
+        if p:
+            spor_satir = f"""  14:30  🏋️  Spor — Öğleden sonra git
+           {PROG[p]}"""
+            mt_satir = f"""  17:30  🧠  MindTech — {mt if mt else 'Odaklı çalışma'}"""
+            aksam_saati2 = "16:30"
+        else:
+            spor_satir = ""
+            mt_satir = f"""  10:00  🧠  MindTech — Ana seans
+           {mt if mt else 'Odaklı çalışma, min 1 saat'}"""
+            aksam_saati2 = "14:30"
 
-{spor_str}
-🍽️ Öğle: {oglen} / Akşam: {aksam}
-{meyve}
-💊 Kreatin: 5g öğünle
+        govde = f"""{'🎂 YARIN DOĞUM GÜNÜN! Kendine iyi bak.' if dogum else ''}
+━━━━ YARIN BOŞ GÜN · Program ━━━━━━━━━━━━━━━━
 
-💡 MindTech:
-{mt if mt else '— Odaklı çalışma günü.'}
+  08:30  🌅  Uyanış — 2 bardak su · Kreatin 5g
+{mt_satir}
+  {'13:30' if p else aksam_saati2}  🍽️  Öğle: {oglen}
+           {meyve}
+{spor_satir}
+  19:00  🍽️  Akşam: {aksam}
+  22:00  📚  Kişisel Gelişim (30–40 dk)
+  23:30  💤  Uyku
 
-Öncelikler:
-1. {'Spor' if p else 'MindTech'}
-2. {'MindTech' if p else 'Gelişim'}
-3. Pratik iş
-
-💰 KK1: 5 Haz · KK2: 8 Haz — ödendi mi?
+💊 Kreatin 5g öğünle unutma.
+💰 Yarın KK ödemesi var mı?
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 --- Life OS 3.0"""
 
     return konu, govde
